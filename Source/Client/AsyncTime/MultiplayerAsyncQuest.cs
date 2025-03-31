@@ -88,6 +88,7 @@ namespace Multiplayer.Client.Comp
 
         static void Prefix(Quest __instance, ref AsyncTimeComp __state)
         {
+            if (AsyncTimeComp.tickingMap != null) return;
             if (Multiplayer.Client == null) return;
             if (!Multiplayer.GameComp.asyncTime) return;
 
@@ -103,6 +104,7 @@ namespace Multiplayer.Client.Comp
     {
         static void Prefix(Quest __instance, ref AsyncTimeComp __state)
         {
+            if (AsyncTimeComp.tickingMap != null) return;
             if (Multiplayer.Client == null) return;
 
             //Make sure quest is accepted and async time is enabled and there are parts to this quest

@@ -71,6 +71,8 @@ namespace Multiplayer.Client
         public bool forcedNormalSpeed;
         public int eventCount;
 
+        public bool isInContext = false;
+
         public Storyteller storyteller;
         public StoryWatcher storyWatcher;
         public TimeSlower slower = new();
@@ -155,6 +157,14 @@ namespace Multiplayer.Client
 
         public void PreContext()
         {
+            if (isInContext)
+            {
+                Log.Error($"AsyncTimeComp.PreContext() called while already in context for {map}");
+                return;
+            }
+
+            isInContext = true;
+
             if (Multiplayer.GameComp.multifaction)
             {
                 map.PushFaction(
@@ -181,6 +191,12 @@ namespace Multiplayer.Client
 
         public void PostContext()
         {
+            if (!isInContext)
+            {
+                Log.Error($"AsyncTimeComp.PostContext() called while not in context for {map}");
+                return;
+            }
+            isInContext = false;
             Current.Game.storyteller = prevStoryteller;
             Current.Game.storyWatcher = prevStoryWatcher;
 
