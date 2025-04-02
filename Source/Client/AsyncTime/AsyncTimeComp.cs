@@ -71,7 +71,11 @@ namespace Multiplayer.Client
         public bool forcedNormalSpeed;
         public int eventCount;
 
-        public bool isInContext = false;
+        public bool isInContext
+        {
+            get;
+            private set;
+        }
 
         public Storyteller storyteller;
         public StoryWatcher storyWatcher;

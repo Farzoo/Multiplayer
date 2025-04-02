@@ -88,15 +88,23 @@ namespace Multiplayer.Client.Comp
 
         static void Prefix(Quest __instance, ref AsyncTimeComp __state)
         {
-            if (AsyncTimeComp.tickingMap != null) return;
             if (Multiplayer.Client == null) return;
             if (!Multiplayer.GameComp.asyncTime) return;
 
             __state = MultiplayerAsyncQuest.TryGetCachedQuestMap(__instance);
+            if (__state is { isInContext: true })
+            {
+                __state = null;
+                return;
+            }
+
             __state?.PreContext();
         }
 
-        static void Postfix(AsyncTimeComp __state) => __state?.PostContext();
+        static void Postfix(AsyncTimeComp __state)
+        {
+            __state?.PostContext();
+        }
     }
 
     [HarmonyPatch(typeof(Quest), nameof(Quest.Accept))]
@@ -104,17 +112,26 @@ namespace Multiplayer.Client.Comp
     {
         static void Prefix(Quest __instance, ref AsyncTimeComp __state)
         {
-            if (AsyncTimeComp.tickingMap != null) return;
             if (Multiplayer.Client == null) return;
 
             //Make sure quest is accepted and async time is enabled and there are parts to this quest
             if (__instance.State != QuestState.NotYetAccepted || !Multiplayer.GameComp.asyncTime || __instance.parts == null) return;
 
             __state = MultiplayerAsyncQuest.CacheQuest(__instance);
+
+            if (__state is { isInContext: true })
+            {
+                __state = null;
+                return;
+            }
+
             __state?.PreContext();
         }
 
-        static void Postfix(AsyncTimeComp __state) => __state?.PostContext();
+        static void Postfix(AsyncTimeComp __state)
+        {
+            __state?.PostContext();
+        }
     }
 
     [HarmonyPatch(typeof(Quest), nameof(Quest.End))]
